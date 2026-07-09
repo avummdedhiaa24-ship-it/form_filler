@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { FiMaximize2, FiMessageCircle, FiMinimize2, FiRefreshCw, FiX } from 'react-icons/fi';
 import { useAutoScroll } from '../../hooks/useAutoScroll';
-import { sendChatMessage } from '../../services/chatService';
+import { sendChatMessage, submitStudentFormData } from '../../services/chatService';
 import ChatInput from './ChatInput';
 import MessageBubble from './MessageBubble';
 import SuggestionCards from './SuggestionCards';
@@ -49,6 +49,15 @@ function Chatbot() {
   const [messages, setMessages] = useState(initialMessages);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [studentForm, setStudentForm] = useState({
+    active: false,
+    step: 0,
+    data: {
+      name: '',
+      rollNo: '',
+      email: '',
+    },
+  });
   const scrollRef = useAutoScroll();
 
   const panelSize = useMemo(
@@ -67,8 +76,94 @@ function Chatbot() {
     setIsLoading(true);
     setMessages((current) => [...current, createMessage('user', question)]);
 
+    if (studentForm.active) {
+      if (studentForm.step === 1) {
+        setStudentForm((current) => ({
+          ...current,
+          step: 2,
+          data: {
+            ...current.data,
+            name: question,
+          },
+        }));
+        setMessages((current) => [...current, createMessage('assistant', 'What is your Roll Number?')]);
+        setIsLoading(false);
+        return;
+      }
+
+      if (studentForm.step === 2) {
+        setStudentForm((current) => ({
+          ...current,
+          step: 3,
+          data: {
+            ...current.data,
+            rollNo: question,
+          },
+        }));
+        setMessages((current) => [...current, createMessage('assistant', 'What is your Email ID?')]);
+        setIsLoading(false);
+        return;
+      }
+
+      if (studentForm.step === 3) {
+        const payload = {
+          name: studentForm.data.name,
+          roll_no: studentForm.data.rollNo,
+          email_id: question,
+        };
+
+        setStudentForm({
+          active: false,
+          step: 0,
+          data: {
+            name: '',
+            rollNo: '',
+            email: '',
+          },
+        });
+
+        try {
+          const response = await submitStudentFormData({
+            name: payload.name,
+            roll_no: payload.roll_no,
+            email_id: payload.email_id,
+          });
+          setMessages((current) => [
+            ...current,
+            createMessage('assistant', response.text, {
+              attachments: response.attachments,
+              links: response.links,
+              blocks: response.blocks,
+              raw: response.raw,
+            }),
+          ]);
+        } catch {
+          setMessages((current) => [
+            ...current,
+            createMessage('assistant', 'Unable to generate your Student Form right now.'),
+          ]);
+        } finally {
+          setIsLoading(false);
+        }
+        return;
+      }
+    }
+
     try {
       const response = await sendChatMessage(question);
+
+      if (response.raw?.type === 'student_form') {
+        setStudentForm({
+          active: true,
+          step: 1,
+          data: {
+            name: '',
+            rollNo: '',
+            email: '',
+          },
+        });
+      }
+
       setMessages((current) => [
         ...current,
         createMessage('assistant', response.text, {
@@ -95,6 +190,16 @@ function Chatbot() {
         createdAt: new Date(),
       },
     ]);
+    setStudentForm({
+      active: false,
+      step: 0,
+      data: {
+        name: '',
+        rollNo: '',
+        email: '',
+      },
+    });
+    setInput('');
   }
 
   return (

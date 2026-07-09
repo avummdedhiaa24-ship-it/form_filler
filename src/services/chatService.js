@@ -62,3 +62,8 @@ export async function sendChatMessage(question) {
   const { data } = await chatClient.post('/chat', { question });
   return normalizeBotResponse(data);
 }
+
+export async function submitStudentFormData(payload) {
+  const { data } = await chatClient.post('/generate-student-form', payload);
+  return normalizeBotResponse(data);
+}

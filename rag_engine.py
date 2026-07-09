@@ -152,6 +152,23 @@ def is_small_talk(query):
     return query.lower().strip() in small_talk_phrases
 
 # -----------------------------
+# STUDENT FORM REQUESTS
+# -----------------------------
+
+
+def check_student_form_request(query):
+
+    query = query.lower()
+    student_form_phrases = [
+        "student form",
+        "student details form",
+        "student registration form"
+    ]
+
+    return any(phrase in query for phrase in student_form_phrases)
+
+
+# -----------------------------
 # DOWNLOAD REQUESTS
 # -----------------------------
 
@@ -298,6 +315,13 @@ def answer(query):
     print("QUESTION:")
     print(query)
     print("=" * 60)
+
+    if check_student_form_request(query):
+        print("STUDENT FORM REQUEST DETECTED")
+        return {
+            "type": "student_form",
+            "response": "Sure! I'll help you fill the Student Details Form.\n\nWhat is your Name?"
+        }
 
     # Download requests take priority
 
