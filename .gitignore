@@ -1,0 +1,11 @@
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.pyc
+chroma_db/
+.DS_Store
+document/filled_*
+document/temp_*
+document/temp_signature_*
+document/generated_*

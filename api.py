@@ -4,9 +4,11 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from pypdf import PdfReader, PdfWriter
 from pypdf.generic import NameObject
+from typing import Optional
 import os
 
 from rag_engine import answer
+from agent import handle_chat
 
 app = FastAPI()
 
@@ -21,6 +23,8 @@ app.add_middleware(
 
 class Query(BaseModel):
     question: str
+    session_id: str = "default_session"
+    file_data: Optional[str] = None
 
 
 class StudentFormPayload(BaseModel):
@@ -39,8 +43,10 @@ def root():
 @app.post("/chat")
 def chat(query: Query):
 
-    return answer(
-        query.question
+    return handle_chat(
+        query.session_id,
+        query.question,
+        query.file_data
     )
 
 

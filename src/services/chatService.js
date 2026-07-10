@@ -58,8 +58,10 @@ export function normalizeBotResponse(data) {
   };
 }
 
-export async function sendChatMessage(question) {
-  const { data } = await chatClient.post('/chat', { question });
+export async function sendChatMessage(question, fileBase64 = null, session_id = "default_session") {
+  const payload = { question, session_id };
+  if (fileBase64) payload.file_data = fileBase64;
+  const { data } = await chatClient.post('/chat', payload);
   return normalizeBotResponse(data);
 }
 

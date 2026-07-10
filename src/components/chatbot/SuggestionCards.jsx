@@ -1,16 +1,16 @@
-const suggestions = [
-  'Admission Process',
-  'Fee Structure',
-  'Scholarships',
-  'Placement Cell',
-  'Hostel Facilities',
-  'Courses Offered',
+const defaultSuggestions = [
+  'HR Policies',
+  'Leave Rules',
+  'IT Support',
+  'Onboarding',
+  'Employee Benefits',
+  'Job Application Form',
 ];
 
 function SuggestionCards({ onSelect, disabled }) {
   return (
     <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-      {suggestions.map((suggestion) => (
+      {defaultSuggestions.map((suggestion) => (
         <button
           type="button"
           key={suggestion}

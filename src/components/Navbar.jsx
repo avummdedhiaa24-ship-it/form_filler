@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FiMenu, FiX } from 'react-icons/fi';
-import { navLinks } from '../data/siteContent';
+import { navigation } from '../data/siteContent';
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -8,18 +8,18 @@ function Navbar() {
   return (
     <header className="fixed inset-x-0 top-0 z-40 border-b border-slate-200/70 bg-white/90 backdrop-blur-xl">
       <nav className="section-shell flex h-20 items-center justify-between">
-        <a href="#home" className="flex items-center gap-3" aria-label="XYZ College home">
+        <a href="#home" className="flex items-center gap-3" aria-label="XYZ Corp home">
           <div className="grid h-12 w-12 place-items-center rounded-2xl bg-blue-600 text-lg font-bold text-white shadow-soft">
             XYZ
           </div>
           <div>
-            <p className="text-lg font-bold leading-tight text-slate-950">XYZ College</p>
+            <p className="text-lg font-bold leading-tight text-slate-950">XYZ Corp</p>
             <p className="text-xs font-medium uppercase tracking-[0.22em] text-blue-600">Since 1994</p>
           </div>
         </a>
 
         <div className="hidden items-center gap-8 lg:flex">
-          {navLinks.map((link) => (
+          {navigation.map((link) => (
             <a
               key={link.href}
               href={link.href}
@@ -50,7 +50,7 @@ function Navbar() {
       {isOpen && (
         <div className="border-t border-slate-200 bg-white lg:hidden">
           <div className="section-shell flex flex-col gap-2 py-4">
-            {navLinks.map((link) => (
+            {navigation.map((link) => (
               <a
                 key={link.href}
                 href={link.href}

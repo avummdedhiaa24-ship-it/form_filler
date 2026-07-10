@@ -1,206 +1,134 @@
-import { useMemo, useState } from 'react';
-import { FiMaximize2, FiMessageCircle, FiMinimize2, FiRefreshCw, FiX } from 'react-icons/fi';
-import { useAutoScroll } from '../../hooks/useAutoScroll';
-import { sendChatMessage, submitStudentFormData } from '../../services/chatService';
+import { useEffect, useRef, useState } from 'react';
+import { FiMessageCircle, FiMinimize2, FiPaperclip, FiRefreshCw, FiSend, FiX } from 'react-icons/fi';
+import { sendChatMessage } from '../../services/chatService';
 import ChatInput from './ChatInput';
 import MessageBubble from './MessageBubble';
-import SuggestionCards from './SuggestionCards';
 import TypingIndicator from './TypingIndicator';
+import SuggestionCards from './SuggestionCards';
 
-const welcomeMessage = `Hi 👋
-
-I'm your AI College Assistant.
-
-I can help you with:
-
-• Admission Process
-• Courses
-• Fees
-• Hostel
-• Scholarships
-• Placements
-• Timetable
-• Examination
-
-Ask me anything.`;
-
-const initialMessages = [
+const INITIAL_MESSAGES = [
   {
-    id: 'welcome',
+    id: '1',
     role: 'assistant',
-    content: welcomeMessage,
-    createdAt: new Date(),
+    content: (
+      <>
+        Hi 👋
+        <br />
+        <br />
+        I'm your AI Office Assistant.
+        <br />
+        <br />
+        I can help you with:
+        <br />
+        <br />
+        • HR Policies
+        <br />
+        • Employee Benefits
+        <br />
+        • IT Support
+        <br />
+        • Payroll Queries
+        <br />
+        • Onboarding
+        <br />
+        • Leave Rules
+        <br />
+        <br />
+        Ask me anything.
+      </>
+    ),
+    timestamp: new Date(),
   },
 ];
 
-function createMessage(role, content, extra = {}) {
-  return {
-    id: `${role}-${Date.now()}-${Math.random().toString(16).slice(2)}`,
-    role,
-    content,
-    createdAt: new Date(),
-    ...extra,
-  };
-}
-
 function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [messages, setMessages] = useState(initialMessages);
-  const [input, setInput] = useState('');
+  const [isMaximized, setIsMaximized] = useState(false);
+  const [messages, setMessages] = useState(INITIAL_MESSAGES);
+  const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [studentForm, setStudentForm] = useState({
-    active: false,
-    step: 0,
-    data: {
-      name: '',
-      rollNo: '',
-      email: '',
-    },
-  });
-  const scrollRef = useAutoScroll();
 
-  const panelSize = useMemo(
-    () =>
-      isExpanded
-        ? 'bottom-4 right-4 h-[min(820px,calc(100vh-2rem))] w-[min(760px,calc(100vw-2rem))]'
-        : 'bottom-4 right-4 h-[min(700px,calc(100vh-2rem))] w-[min(430px,calc(100vw-2rem))] resize overflow-hidden',
-    [isExpanded],
-  );
+  const messagesEndRef = useRef(null);
 
-  async function submitMessage(text = input) {
-    const question = text.trim();
-    if (!question || isLoading) return;
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
-    setInput('');
-    setIsLoading(true);
-    setMessages((current) => [...current, createMessage('user', question)]);
+  useEffect(() => {
+    if (isOpen) {
+      scrollToBottom();
+    }
+  }, [isOpen, messages]);
 
-    if (studentForm.active) {
-      if (studentForm.step === 1) {
-        setStudentForm((current) => ({
-          ...current,
-          step: 2,
-          data: {
-            ...current.data,
-            name: question,
-          },
-        }));
-        setMessages((current) => [...current, createMessage('assistant', 'What is your Roll Number?')]);
-        setIsLoading(false);
-        return;
-      }
+  const handleSend = async (text, file) => {
+    if (!text?.trim() && !file) return;
 
-      if (studentForm.step === 2) {
-        setStudentForm((current) => ({
-          ...current,
-          step: 3,
-          data: {
-            ...current.data,
-            rollNo: question,
-          },
-        }));
-        setMessages((current) => [...current, createMessage('assistant', 'What is your Email ID?')]);
-        setIsLoading(false);
-        return;
-      }
-
-      if (studentForm.step === 3) {
-        const payload = {
-          name: studentForm.data.name,
-          roll_no: studentForm.data.rollNo,
-          email_id: question,
-        };
-
-        setStudentForm({
-          active: false,
-          step: 0,
-          data: {
-            name: '',
-            rollNo: '',
-            email: '',
-          },
-        });
-
-        try {
-          const response = await submitStudentFormData({
-            name: payload.name,
-            roll_no: payload.roll_no,
-            email_id: payload.email_id,
-          });
-          setMessages((current) => [
-            ...current,
-            createMessage('assistant', response.text, {
-              attachments: response.attachments,
-              links: response.links,
-              blocks: response.blocks,
-              raw: response.raw,
-            }),
-          ]);
-        } catch {
-          setMessages((current) => [
-            ...current,
-            createMessage('assistant', 'Unable to generate your Student Form right now.'),
-          ]);
-        } finally {
-          setIsLoading(false);
-        }
-        return;
-      }
+    let base64File = null;
+    if (file) {
+      base64File = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(file);
+      });
     }
 
-    try {
-      const response = await sendChatMessage(question);
+    const displayText = text?.trim() ? text : 'Uploaded a file';
+    const newUserMsg = { id: Date.now().toString(), role: 'user', content: displayText, timestamp: new Date() };
+    setMessages((prev) => [...prev, newUserMsg]);
+    setInputValue('');
+    setIsLoading(true);
 
-      if (response.raw?.type === 'student_form') {
-        setStudentForm({
-          active: true,
-          step: 1,
-          data: {
-            name: '',
-            rollNo: '',
-            email: '',
-          },
-        });
+    try {
+      const response = await sendChatMessage(displayText, base64File);
+      const rawData = response.raw || response;
+      let assistantContent = rawData.response || response.text || "Sorry, I couldn't understand that.";
+
+      if (rawData.type === 'pdf' && rawData.url) {
+        assistantContent = (
+          <div className="flex flex-col gap-3">
+            <p>{rawData.response}</p>
+            <a
+              href={rawData.url}
+              download
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex w-fit items-center gap-2 rounded-xl bg-blue-50 px-4 py-2.5 text-sm font-semibold text-blue-700 transition hover:bg-blue-100"
+            >
+              <FiPaperclip />
+              Download Generated PDF
+            </a>
+          </div>
+        );
       }
 
-      setMessages((current) => [
-        ...current,
-        createMessage('assistant', response.text, {
-          attachments: response.attachments,
-          links: response.links,
-          blocks: response.blocks,
-          raw: response.raw,
-        }),
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: assistantContent,
+          timestamp: new Date(),
+        },
       ]);
-    } catch {
-      setMessages((current) => [
-        ...current,
-        createMessage('assistant', 'Unable to connect to AI Assistant.'),
+    } catch (error) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: 'Sorry, I encountered an error. Please try again.',
+          timestamp: new Date(),
+          isError: true,
+        },
       ]);
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
-  function clearChat() {
-    setMessages([
-      {
-        ...initialMessages[0],
-        createdAt: new Date(),
-      },
-    ]);
-    setStudentForm({
-      active: false,
-      step: 0,
-      data: {
-        name: '',
-        rollNo: '',
-        email: '',
-      },
-    });
-    setInput('');
-  }
+  const panelSize = isMaximized
+    ? 'bottom-4 right-4 h-[calc(100vh-2rem)] w-[calc(100vw-2rem)]'
+    : 'bottom-5 right-5 h-[680px] max-h-[calc(100vh-2.5rem)] w-[400px] max-w-[calc(100vw-2.5rem)]';
 
   return (
     <>
@@ -210,73 +138,75 @@ function Chatbot() {
         className={`fixed bottom-5 right-5 z-50 grid h-16 w-16 place-items-center rounded-full bg-blue-600 text-white shadow-panel transition hover:-translate-y-1 hover:bg-blue-700 ${
           isOpen ? 'pointer-events-none scale-95 opacity-0' : 'opacity-100'
         }`}
-        aria-label="Open AI College Assistant"
+        aria-label="Open AI Office Assistant"
       >
         <FiMessageCircle size={28} />
       </button>
 
       {isOpen && (
         <aside
-          className={`fixed z-50 flex min-h-[520px] min-w-[320px] max-w-[calc(100vw-2rem)] flex-col rounded-[1.75rem] border border-slate-200 bg-white shadow-panel ${panelSize}`}
-          aria-label="AI College Assistant chat window"
+          className={`fixed z-50 flex min-h-[520px] min-w-[320px] max-w-[calc(100vw-2rem)] flex-col rounded-[1.75rem] border border-slate-200 bg-white shadow-panel transition-all duration-300 ${panelSize}`}
+          aria-label="AI Office Assistant chat window"
         >
           <div className="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-3">
             <div className="flex min-w-0 items-center gap-3">
-              <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-blue-600 text-white">
+              <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-blue-600 text-white">
                 <FiMessageCircle size={21} />
               </div>
               <div className="min-w-0">
-                <h2 className="truncate text-sm font-bold text-slate-950">AI College Assistant</h2>
+                <h2 className="truncate text-sm font-bold text-slate-950">AI Office Assistant</h2>
                 <p className="text-xs font-medium text-emerald-600">Online</p>
               </div>
             </div>
-
-            <div className="flex items-center gap-1">
+            <div className="flex shrink-0 items-center gap-1 text-slate-400">
               <button
                 type="button"
-                onClick={clearChat}
-                className="grid h-9 w-9 place-items-center rounded-full text-slate-500 transition hover:bg-slate-100 hover:text-blue-700"
-                aria-label="Clear chat"
-                title="Clear Chat"
+                onClick={() => setMessages(INITIAL_MESSAGES)}
+                className="grid h-9 w-9 place-items-center rounded-full transition hover:bg-slate-100 hover:text-slate-600"
+                aria-label="Reset chat"
+                title="Reset chat"
               >
-                <FiRefreshCw size={17} />
+                <FiRefreshCw size={16} />
               </button>
               <button
                 type="button"
-                onClick={() => setIsExpanded((value) => !value)}
-                className="grid h-9 w-9 place-items-center rounded-full text-slate-500 transition hover:bg-slate-100 hover:text-blue-700"
-                aria-label={isExpanded ? 'Minimize chat window' : 'Expand chat window'}
-                title={isExpanded ? 'Minimize' : 'Resize'}
+                onClick={() => setIsMaximized(!isMaximized)}
+                className="grid h-9 w-9 hidden place-items-center rounded-full transition hover:bg-slate-100 hover:text-slate-600 sm:grid"
+                aria-label={isMaximized ? 'Minimize' : 'Maximize'}
+                title={isMaximized ? 'Minimize' : 'Maximize'}
               >
-                {isExpanded ? <FiMinimize2 size={17} /> : <FiMaximize2 size={17} />}
+                <FiMinimize2 size={16} />
               </button>
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="grid h-9 w-9 place-items-center rounded-full text-slate-500 transition hover:bg-slate-100 hover:text-red-600"
+                className="grid h-9 w-9 place-items-center rounded-full transition hover:bg-slate-100 hover:text-slate-600"
                 aria-label="Close chat"
-                title="Close"
+                title="Close chat"
               >
-                <FiX size={19} />
+                <FiX size={20} />
               </button>
             </div>
           </div>
 
-          <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto bg-slate-50 px-4 py-5">
-            {messages.map((message, index) => (
-              <div key={message.id}>
-                <MessageBubble message={message} />
-                {index === 0 && (
-                  <div className="mt-4">
-                    <SuggestionCards onSelect={submitMessage} disabled={isLoading} />
-                  </div>
-                )}
-              </div>
-            ))}
-            {isLoading && <TypingIndicator />}
+          <div className="flex-1 overflow-y-auto bg-slate-50/50 p-4">
+            <div className="flex flex-col gap-4">
+              {messages.map((message) => (
+                <MessageBubble key={message.id} message={message} />
+              ))}
+              {isLoading && <TypingIndicator />}
+            </div>
+            <div ref={messagesEndRef} />
           </div>
 
-          <ChatInput value={input} onChange={setInput} onSubmit={() => submitMessage()} disabled={isLoading} />
+          <div className="border-t border-slate-200 bg-white px-4 pb-4 pt-3 rounded-b-[1.75rem]">
+            {messages.length === 1 && (
+              <div className="mb-3">
+                <SuggestionCards onSelect={handleSend} disabled={isLoading} />
+              </div>
+            )}
+            <ChatInput value={inputValue} onChange={setInputValue} onSend={handleSend} disabled={isLoading} />
+          </div>
         </aside>
       )}
     </>

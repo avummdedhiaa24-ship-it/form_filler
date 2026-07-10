@@ -1,21 +1,22 @@
-import AboutSection from '../components/AboutSection';
-import AdmissionsSection from '../components/AdmissionsSection';
-import Chatbot from '../components/chatbot/Chatbot';
-import ContactSection from '../components/ContactSection';
-import CoursesSection from '../components/CoursesSection';
-import Footer from '../components/Footer';
-import Hero from '../components/Hero';
+import React from 'react';
 import Navbar from '../components/Navbar';
+import Hero from '../components/Hero';
+import AboutSection from '../components/AboutSection';
+import DepartmentsSection from '../components/DepartmentsSection';
+import CareersSection from '../components/CareersSection';
+import ContactSection from '../components/ContactSection';
+import Footer from '../components/Footer';
+import Chatbot from '../components/chatbot/Chatbot';
 
 function Home() {
   return (
-    <div className="min-h-screen bg-white text-slate-900">
+    <div className="flex min-h-screen flex-col">
       <Navbar />
-      <main>
+      <main className="flex-1">
         <Hero />
         <AboutSection />
-        <CoursesSection />
-        <AdmissionsSection />
+        <DepartmentsSection />
+        <CareersSection />
         <ContactSection />
       </main>
       <Footer />

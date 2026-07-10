@@ -11,105 +11,103 @@ import {
   FiPhone,
   FiStar,
   FiTarget,
+  FiTrendingUp,
   FiUsers,
+  FiGlobe,
+  FiMonitor,
+  FiClock,
 } from 'react-icons/fi';
 import { courseImages } from '../assets/illustrations';
 
-export const navLinks = [
+export const navigation = [
   { label: 'Home', href: '#home' },
   { label: 'About', href: '#about' },
-  { label: 'Courses', href: '#courses' },
-  { label: 'Admissions', href: '#admissions' },
+  { label: 'Departments', href: '#departments' },
+  { label: 'Careers', href: '#careers' },
   { label: 'Contact', href: '#contact' },
 ];
 
-export const aboutCards = [
+export const features = [
   {
-    title: 'Mission',
+    title: 'Excellence in Business',
     description:
-      'Deliver rigorous, inclusive education that prepares students for meaningful careers and responsible citizenship.',
-    icon: FiTarget,
-  },
-  {
-    title: 'Vision',
-    description:
-      'Build a future-ready academic community known for innovation, ethics, research, and industry collaboration.',
-    icon: FiCompass,
-  },
-  {
-    title: 'Campus Overview',
-    description:
-      'A connected learning environment with digital classrooms, advanced labs, library access, and student support spaces.',
-    icon: FiHome,
-  },
-  {
-    title: 'Achievements',
-    description:
-      'Recognized for strong placement outcomes, student projects, technical events, and competitive academic results.',
+      'Deliver rigorous, inclusive solutions that prepare employees for meaningful careers and responsible leadership.',
     icon: FiAward,
+  },
+  {
+    title: 'Global Opportunities',
+    description:
+      'Build a strong foundation for a global career with our comprehensive industry exposure and partnerships.',
+    icon: FiGlobe,
+  },
+  {
+    title: 'Modern Infrastructure',
+    description:
+      'A connected workspace with digital collaboration tools, advanced labs, and employee support spaces.',
+    icon: FiMonitor,
+  },
+  {
+    title: 'Career Advancement',
+    description:
+      'Recognized for strong promotion outcomes, employee projects, technical events, and competitive results.',
+    icon: FiTrendingUp,
   },
 ];
 
-export const courses = [
+export const departments = [
   {
-    title: 'Computer Engineering',
-    description: 'Software development, data structures, cloud systems, databases, and modern computing foundations.',
+    title: 'Engineering & Tech',
+    description:
+      'Focuses on software development, infrastructure, and emerging technologies.',
     image: courseImages.computer,
   },
   {
     title: 'Information Technology',
-    description: 'Networks, cybersecurity, web platforms, analytics, enterprise systems, and applied IT operations.',
+    description:
+      'Manages internal systems, cyber security, and enterprise solutions.',
     image: courseImages.information,
   },
   {
-    title: 'Mechanical Engineering',
-    description: 'Design, manufacturing, thermodynamics, robotics, CAD tools, and practical engineering workshops.',
+    title: 'Operations & Logistics',
+    description:
+      'Ensures smooth day-to-day operations and supply chain management.',
     image: courseImages.mechanical,
   },
   {
-    title: 'Civil Engineering',
-    description: 'Structural design, surveying, sustainable construction, transportation, and infrastructure planning.',
+    title: 'Facilities Management',
+    description:
+      'Maintains office infrastructure, safety, and physical resources.',
     image: courseImages.civil,
   },
   {
-    title: 'Electronics Engineering',
-    description: 'Embedded systems, circuits, communication, IoT, instrumentation, and hands-on electronics labs.',
+    title: 'Hardware & Electronics',
+    description:
+      'Develops hardware solutions and electronic systems for our products.',
     image: courseImages.electronics,
   },
-];
-
-export const admissionItems = [
   {
-    title: 'Admission Process',
-    description: 'Apply online, submit documents, attend counseling, and confirm your seat after verification.',
-    icon: FiCheckCircle,
-  },
-  {
-    title: 'Eligibility',
-    description: 'Applicants should meet board, entrance, and category requirements published for the academic year.',
-    icon: FiUsers,
-  },
-  {
-    title: 'Important Dates',
-    description: 'Application windows, merit lists, counseling rounds, and fee deadlines are updated regularly.',
-    icon: FiCalendar,
+    title: 'Human Resources',
+    description:
+      'Supports employee growth, onboarding, recruitment, and wellness.',
+    image: courseImages.business,
   },
 ];
 
 export const stats = [
-  { label: 'Students', value: '5,000+' },
-  { label: 'Programs', value: '25+' },
-  { label: 'Placement Partners', value: '120+' },
+  { label: 'Employees', value: '5,000+' },
+  { label: 'Departments', value: '25+' },
+  { label: 'Global Partners', value: '120+' },
   { label: 'Years of Excellence', value: '30+' },
 ];
 
-export const contactDetails = [
-  { label: 'Address', value: 'XYZ College Campus, Knowledge Park, Pune, Maharashtra 411001', icon: FiMapPin },
-  { label: 'Phone', value: '+91 98765 43210', icon: FiPhone },
-  { label: 'Email', value: 'admissions@xyzcollege.edu', icon: FiBookOpen },
+export const contactInfo = [
+  { label: 'Address', value: 'XYZ Corp HQ, Business Park, Pune, Maharashtra 411001', icon: FiMapPin },
+  { label: 'Phone', value: '+91 20 1234 5678', icon: FiPhone },
+  { label: 'Email', value: 'hr@xyzcorp.com', icon: FiBookOpen },
+  { label: 'Working Hours', value: 'Mon - Fri: 9:00 AM - 6:00 PM', icon: FiClock },
 ];
 
-export const quickLinks = ['Admissions', 'Departments', 'Library', 'Placements', 'Student Portal'];
+export const quickLinks = ['Careers', 'Departments', 'Resources', 'Perks', 'Employee Portal'];
 
 export const socialLinks = [
   { label: 'Academics', icon: FiBookOpen },

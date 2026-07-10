@@ -9,13 +9,13 @@ function Hero() {
         <div className="animate-fade-up">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm">
             <FiBookOpen />
-            AI-enabled campus support
+            AI-enabled office support
           </div>
           <h1 className="max-w-3xl text-4xl font-bold leading-tight text-slate-950 sm:text-5xl lg:text-6xl">
-            Welcome to XYZ College
+            Welcome to XYZ Corp
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600 sm:text-xl">
-            Empowering Students Through Quality Education
+            Empowering Professionals Through Innovation
           </p>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
             <a
@@ -26,10 +26,10 @@ function Hero() {
               <FiArrowRight />
             </a>
             <a
-              href="#courses"
+              href="#departments"
               className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-7 py-4 font-semibold text-slate-800 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-200 hover:text-blue-700"
             >
-              Explore Courses
+              Explore Departments
             </a>
           </div>
 
@@ -48,12 +48,12 @@ function Hero() {
           <div className="relative overflow-hidden rounded-[2rem] border border-white bg-white p-3 shadow-panel">
             <img
               src={heroImage}
-              alt="Students studying together on campus"
+              alt="Professionals working together"
               className="h-[420px] w-full rounded-[1.5rem] object-cover sm:h-[520px]"
             />
             <div className="absolute bottom-8 left-8 right-8 rounded-3xl bg-white/92 p-5 shadow-soft backdrop-blur">
-              <p className="text-sm font-semibold text-blue-600">Ask the AI College Assistant</p>
-              <p className="mt-2 text-lg font-bold text-slate-950">Admissions, fees, placements, hostel and more.</p>
+              <p className="text-sm font-semibold text-blue-600">Ask the AI Office Assistant</p>
+              <p className="mt-2 text-lg font-bold text-slate-950">Policies, careers, benefits, IT support and more.</p>
             </div>
           </div>
         </div>

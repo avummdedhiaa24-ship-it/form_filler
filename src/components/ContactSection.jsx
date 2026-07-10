@@ -1,4 +1,4 @@
-import { contactDetails } from '../data/siteContent';
+import { contactInfo } from '../data/siteContent';
 import SectionHeader from './SectionHeader';
 
 function ContactSection() {
@@ -6,13 +6,13 @@ function ContactSection() {
     <section id="contact" className="bg-slate-50 py-20">
       <div className="section-shell">
         <SectionHeader
-          eyebrow="Contact"
-          title="Reach the campus team."
-          description="For admissions, academic support, and general enquiries, connect with XYZ College through the details below."
+          eyebrow="Contact Us"
+          title="Get in touch"
+          description="For careers, technical support, and general enquiries, connect with XYZ Corp through the details below."
         />
         <div className="grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
           <div className="grid gap-4">
-            {contactDetails.map(({ label, value, icon: Icon }) => (
+            {contactInfo.map(({ label, value, icon: Icon }) => (
               <article key={label} className="flex gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                 <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-blue-100 text-blue-700">
                   <Icon size={22} />

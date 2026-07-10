@@ -152,20 +152,47 @@ def is_small_talk(query):
     return query.lower().strip() in small_talk_phrases
 
 # -----------------------------
-# STUDENT FORM REQUESTS
+# FORM REQUESTS
 # -----------------------------
 
 
-def check_student_form_request(query):
-
+def check_form_request(query):
     query = query.lower()
-    student_form_phrases = [
-        "student form",
-        "student details form",
-        "student registration form"
+    
+    employee_phrases = [
+        "employee form",
+        "employee details form",
+        "employee registration"
     ]
+    if any(phrase in query for phrase in employee_phrases):
+        return "employee_details_form"
+        
+    job_phrases = [
+        "job application form",
+        "job form",
+        "career form",
+        "apply"
+    ]
+    if any(phrase in query for phrase in job_phrases):
+        return "job_application_form"
+        
+    leave_phrases = [
+        "leave request",
+        "leave form",
+        "leave application"
+    ]
+    if any(phrase in query for phrase in leave_phrases):
+        return "leave_request_form"
 
-    return any(phrase in query for phrase in student_form_phrases)
+    cert_phrases = [
+        "character certificate",
+        "certificate form",
+        "character form"
+    ]
+    if any(phrase in query for phrase in cert_phrases):
+        return "character_certificate_form"
+        
+    return None
 
 
 # -----------------------------
@@ -173,22 +200,7 @@ def check_student_form_request(query):
 # -----------------------------
 
 DOWNLOADABLE_FILES = {
-    "application form": {
-        "filename": "application_form.pdf",
-        "response": "You can download the Admission Form below.",
-    },
-    "admission form": {
-        "filename": "application_form.pdf",
-        "response": "You can download the Admission Form below.",
-    },
-    "hostel form": {
-        "filename": "hostel_form.pdf",
-        "response": "You can download the Hostel Form below.",
-    },
-    "hostel application": {
-        "filename": "hostel_form.pdf",
-        "response": "You can download the Hostel Form below.",
-    },
+    # Keep empty for now as forms are interactive
 }
 
 
@@ -210,90 +222,37 @@ def check_download_request(query):
 # -----------------------------
 # DOCUMENT QUERY DETECTOR
 # -----------------------------
-# -----------------------------
 
 def is_document_query(query):
 
     document_keywords = [
-        "abc college",
-        "admission",
-        "admissions",
-        "admission handbook",
-        "admission process",
-        "application",
-        "apply",
-        "college",
-        "about the college",
-        "programme",
-        "programmes",
-        "program",
-        "programs",
-        "b.tech",
-        "btech",
-        "bba",
-        "bca",
-        "b.com",
-        "bcom",
-        "b.a",
-        "bachelor of arts",
-        "b.sc",
-        "bsc",
-        "m.tech",
-        "mtech",
-        "mba",
-        "mca",
-        "m.com",
-        "mcom",
-        "m.a",
-        "master of arts",
-        "m.sc",
-        "msc",
-        "offered",
-        "eligibility",
-        "criteria",
-        "documents required",
-        "required documents",
-        "important dates",
-        "dates",
-        "deadline",
-        "fee",
-        "fees",
-        "fee structure",
-        "payment",
-        "payment schedule",
-        "scholarship",
-        "scholarships",
-        "financial aid",
-        "reservation",
-        "reservation policy",
-        "refund",
-        "cancellation",
-        "rules",
-        "regulations",
-        "attendance",
-        "exam",
-        "exams",
-        "code of conduct",
-        "grievance",
-        "hostel",
-        "transport",
+        "xyz corp",
+        "company",
+        "hr",
+        "policies",
+        "policy",
+        "leave rules",
+        "benefits",
+        "onboarding",
+        "payroll",
+        "it support",
+        "careers",
+        "departments",
+        "employee",
+        "employees",
+        "holiday",
+        "holidays",
+        "salary",
+        "performance",
+        "appraisal",
+        "training",
         "faq",
         "faqs",
-        "contact",
-        "subject",
-        "subjects",
-        "syllabus",
-        "semester",
-        "course",
-        "unit",
-        "chapter",
-        "topic",
+        "rules",
+        "regulations",
         "pdf",
         "document",
-        "page",
-        "machine learning",
-        "big data",
-        "cryptography"
+        "handbook"
     ]
 
     query = query.lower()
@@ -316,22 +275,39 @@ def answer(query):
     print(query)
     print("=" * 60)
 
-    if check_student_form_request(query):
-        print("STUDENT FORM REQUEST DETECTED")
+    form_type = check_form_request(query)
+    if form_type == "employee_details_form":
+        print("EMPLOYEE FORM REQUEST DETECTED")
         return {
-            "type": "student_form",
-            "response": "Sure! I'll help you fill the Student Details Form.\n\nWhat is your Name?"
+            "type": "employee_details_form",
+            "response": "Sure! I'll help you fill the Employee Details Form.\n\nWhat is your Name?"
+        }
+    elif form_type == "job_application_form":
+        print("JOB APPLICATION REQUEST DETECTED")
+        return {
+            "type": "job_application_form",
+            "response": "Sure! I'll help you fill the Job Application Form.\n\nWhat is your Full Name?"
+        }
+    elif form_type == "leave_request_form":
+        print("LEAVE REQUEST DETECTED")
+        return {
+            "type": "leave_request_form",
+            "response": "Sure! I can help you prepare the Leave Request Form.\n\nWhat is your name?"
+        }
+    elif form_type == "character_certificate_form":
+        print("CHARACTER CERTIFICATE DETECTED")
+        return {
+            "type": "character_certificate_form",
+            "response": "Sure! I'll help you generate the Character Certificate.\n\nWhat is the applicant's Full Name?"
         }
 
     # Download requests take priority
-
     download = check_download_request(query)
     if download:
         print("DOWNLOAD REQUEST DETECTED")
         return download
 
     # Small talk always goes to LLM
-
     if is_small_talk(query):
         print("SMALL TALK DETECTED")
         return general_chat(query)
@@ -369,7 +345,6 @@ def answer(query):
     print(distances)
 
     if len(docs) == 0:
-
         print("\nNO DOCUMENTS FOUND")
         return general_chat(query)
 
@@ -387,10 +362,8 @@ def answer(query):
     # -----------------------------
 
     if best_distance > DISTANCE_THRESHOLD:
-
         print("\nLOW CONFIDENCE RETRIEVAL")
         print("USING GENERAL QWEN")
-
         return general_chat(query)
 
     # -----------------------------

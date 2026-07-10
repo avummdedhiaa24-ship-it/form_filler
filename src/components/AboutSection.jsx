@@ -1,17 +1,17 @@
 import SectionHeader from './SectionHeader';
-import { aboutCards } from '../data/siteContent';
+import { features } from '../data/siteContent';
 
 function AboutSection() {
   return (
     <section id="about" className="bg-white py-20">
       <div className="section-shell">
         <SectionHeader
-          eyebrow="About XYZ College"
-          title="A modern campus built around learning, mentorship, and opportunity."
-          description="Our academic ecosystem combines strong fundamentals, practical projects, student support, and partnerships that help learners grow with confidence."
+          eyebrow="About XYZ Corp"
+          title="Building the future with technology and talent."
+          description="Our corporate ecosystem combines strong fundamentals, innovative projects, employee support, and partnerships that help professionals grow with confidence."
         />
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-          {aboutCards.map(({ title, description, icon: Icon }) => (
+          {features.map(({ title, description, icon: Icon }) => (
             <article
               key={title}
               className="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:bg-white hover:shadow-soft"
